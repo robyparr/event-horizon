@@ -1,0 +1,20 @@
+[env]
+_.file = ".env"
+
+DATABASE_URL_TEST="postgres://postgres:postgres@localhost/event_horizon_test?sslmode=disable"
+
+[tasks.serve]
+run = ['air -c .air.toml']
+
+[tasks.reset-db]
+ run = [
+   'psql -c "DROP DATABASE IF EXISTS event_horizon_dev;" -c "DROP DATABASE IF EXISTS event_horizon_test;"',
+   'psql -c "CREATE DATABASE event_horizon_dev;" -c "CREATE DATABASE event_horizon_test;"',
+   'migrate -path=./migrations -database="$DATABASE_URL" up'
+ ]
+
+[tasks.migrate]
+run = ['migrate -path=./migrations -database="$DATABASE_URL" {{arg(name="direction")}} {{arg(name="n")}}']
+
+[tasks.create-migration]
+run = ['migrate create -dir=./migrations -ext=.sql {{arg(name="migration_name")}}']

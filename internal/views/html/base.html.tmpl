@@ -1,0 +1,28 @@
+{{define "base"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{template "title" .}} - Event Horizon</title>
+  <link rel="stylesheet" href="/static/css/app.css?v={{.AppStartedAt}}" />
+  <link rel="icon" type="image/png" href="/static/img/favicon.png" />
+</head>
+<body class="container">
+  <header>
+    <div class="content">
+      <h1><a href="/">Event Horizon</a></h1>
+      {{template "nav" .}}
+    </div>
+  </header>
+  <main>
+    {{range $key, $value := .Flash}}
+      <div class="alert {{$key}}">{{$value}}</div>
+    {{end}}
+    {{template "main" .}}
+  </main>
+  <script src="/static/js/app.js?v={{.AppStartedAt}}" type="text/javascript"></script>
+</body>
+</html>
+{{end}}
