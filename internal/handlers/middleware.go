@@ -5,12 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/justinas/nosurf"
 	"github.com/robyparr/event-horizon/internal"
 	"github.com/robyparr/event-horizon/internal/models"
 )
+
+var skipLoggingURLPrefixes = []string{
+	"/static/",
+	"/apple-touch-icon",
+	"favicon.ico",
+}
 
 type middleware struct {
 	app *internal.App
@@ -40,7 +47,7 @@ func (m middleware) cacheStaticAssets(next http.Handler) http.Handler {
 
 func (m middleware) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !m.app.Config.IsProductionEnv() {
+		if !m.app.Config.IsProductionEnv() && hasSkippableURLPrefix(r.URL.Path) {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -51,6 +58,16 @@ func (m middleware) logRequest(next http.Handler) http.Handler {
 
 		m.app.Logger.Info("received request", "ip", r.RemoteAddr, "proto", r.Proto, "method", r.Method, "uri", r.URL.RequestURI(), "time", dur.String())
 	})
+}
+
+func hasSkippableURLPrefix(url string) bool {
+	for _, prefix := range skipLoggingURLPrefixes {
+		if strings.HasPrefix(url, prefix) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m middleware) recoverPanic(next http.Handler) http.Handler {
