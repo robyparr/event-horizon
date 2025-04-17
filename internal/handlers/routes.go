@@ -25,11 +25,15 @@ func Routes(app *internal.App) http.Handler {
 
 	// Authentication required
 	requireAuthMiddleware := standardMiddleware.Append(middleware.requireAuthentication)
-	mux.Handle("GET /{$}", requireAuthMiddleware.Then(homeHandler(app)))
+	mux.Handle("GET /{$}", requireAuthMiddleware.Then(sitesListHandler(app)))
 
 	mux.Handle("POST /user/logout", requireAuthMiddleware.Then(userLogoutPostHandler(app)))
 	mux.Handle("GET /user/settings", requireAuthMiddleware.Then(userSettingsHandler(app)))
 	mux.Handle("POST /sessions/{id}/delete", requireAuthMiddleware.Then(userSessionsDeleteHandler(app)))
+
+	mux.Handle("GET /sites/{id}", requireAuthMiddleware.Then(sitesShowHandler(app)))
+	mux.Handle("POST /sites", requireAuthMiddleware.Then(sitesCreateHandler(app)))
+	mux.Handle("POST /sites/{id}/delete", requireAuthMiddleware.Then(sitesDeleteHandler(app)))
 
 	baseMiddleware := alice.New(middleware.recoverPanic, middleware.logRequest, middleware.commonHeaders)
 	return baseMiddleware.Then(mux)

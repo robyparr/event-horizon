@@ -13,6 +13,12 @@ run = ['air -c .air.toml']
    'migrate -path=./migrations -database="$DATABASE_URL" up'
  ]
 
+ [tasks.reset-test-db]
+ run = [
+  'psql -c "DROP DATABASE IF EXISTS event_horizon_test;"',
+  'psql -c "CREATE DATABASE event_horizon_test;"',
+ ]
+
 [tasks.migrate]
 run = ['migrate -path=./migrations -database="$DATABASE_URL" {{arg(name="direction")}} {{arg(name="n")}}']
 

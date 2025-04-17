@@ -25,7 +25,7 @@ func TestHomeHandler(t *testing.T) {
 
 		code, _, body := ts.get(t, "/")
 		assert.Equal(t, code, http.StatusOK)
-		assert.StringContains(t, body, "<h1>Home</h1>")
+		assert.StringContains(t, body, "<h2>Sites</h2>")
 		assert.StringContains(t, body, user.Email)
 	})
 }

@@ -1,0 +1,46 @@
+{{define "title"}}Sites{{end}}
+
+{{define "main"}}
+<h2>Sites</h2>
+<div class="card">
+  <div class="mb-3 flex">
+    <form action="/sites" method="POST" class="flex w-full gap-1">
+      <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+
+      <div class="flex-grow">
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="New site"
+          {{with .Form.FieldErrors.name}}class="invalid"{{end}}
+        />
+        {{with .Form.FieldErrors.name}}<span class="error-message">{{.}}</span>{{end}}
+      </div>
+
+      <button type="submit" class="primary button">Create</button>
+    </form>
+  </div>
+
+  {{if .Data.sites}}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Data.sites}}
+          <tr>
+            <td><a href="/sites/{{.ID}}">{{.Name}}</a></td>
+            <td>{{.CreatedAt | humanDatetime $.CurrentUser.Timezone}}</td>
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+  {{else}}
+    <p>No sites yet!</p>
+  {{end}}
+</div>
+{{end}}

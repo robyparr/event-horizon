@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	_ "github.com/lib/pq"
@@ -43,6 +44,8 @@ func newTestDB(t *testing.T) *sql.DB {
 			t.Fatal(err)
 		}
 
+		slices.Sort(migrationFiles)
+		slices.Reverse(migrationFiles)
 		for _, file := range migrationFiles {
 			migration, err := os.ReadFile(file)
 			if err != nil {

@@ -39,6 +39,7 @@ func newTestApplication(t *testing.T) *internal.App {
 		Repos: &models.Repos{
 			Users:    mocks.NewUserRepo(),
 			Sessions: mocks.NewSessionRepo(),
+			Sites:    mocks.NewSiteRepo(),
 		},
 		Views:        views,
 		FormDecoder:  form.NewDecoder(),
