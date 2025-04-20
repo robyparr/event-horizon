@@ -35,6 +35,12 @@ func Routes(app *internal.App) http.Handler {
 	mux.Handle("POST /sites", requireAuthMiddleware.Then(sitesCreateHandler(app)))
 	mux.Handle("POST /sites/{id}/delete", requireAuthMiddleware.Then(sitesDeleteHandler(app)))
 
+	// API
+	apiMiddleware := alice.New(middleware.commonAPIHeaders)
+
+	mux.Handle("OPTIONS /api/", apiMiddleware.Then(apiPreflightHandler(app)))
+	mux.Handle("POST /api/events", apiMiddleware.Then(middleware.loadSite(apiCreateEventHandler(app))))
+
 	baseMiddleware := alice.New(middleware.recoverPanic, middleware.logRequest, middleware.commonHeaders)
 	return baseMiddleware.Then(mux)
 }

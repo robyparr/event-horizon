@@ -27,6 +27,7 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Total Events</th>
           <th>Created</th>
         </tr>
       </thead>
@@ -34,6 +35,7 @@
         {{range .Data.sites}}
           <tr>
             <td><a href="/sites/{{.ID}}">{{.Name}}</a></td>
+            <td>{{.EventCount}}</td>
             <td>{{.CreatedAt | humanDatetime $.CurrentUser.Timezone}}</td>
           </tr>
         {{end}}

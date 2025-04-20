@@ -15,6 +15,8 @@ type Site struct {
 	Token     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	EventCount int
 }
 
 type SiteRepoInterface interface {
@@ -22,6 +24,7 @@ type SiteRepoInterface interface {
 	Insert(s *Site) error
 	FindForUser(u *User, id int64) (Site, error)
 	Delete(s *Site) error
+	FindByToken(token string) (Site, error)
 }
 
 type SiteRepo struct {
@@ -30,8 +33,12 @@ type SiteRepo struct {
 
 func (r *SiteRepo) ListForUser(u *User) ([]Site, error) {
 	var sites []Site
-
-	rows, err := r.db.Query("SELECT * FROM sites WHERE user_id = $1;", u.ID)
+	stmt := `
+		SELECT *, (SELECT COUNT(*) FROM events WHERE site_id = sites.id) FROM sites
+		WHERE sites.user_id = $1
+		;
+	`
+	rows, err := r.db.Query(stmt, u.ID)
 	if err != nil {
 		return sites, fmt.Errorf("[SiteRepo.ListForUser] %w", err)
 	}
@@ -39,7 +46,7 @@ func (r *SiteRepo) ListForUser(u *User) ([]Site, error) {
 	for rows.Next() {
 		var s Site
 
-		err = rows.Scan(&s.ID, &s.UserID, &s.Name, &s.Token, &s.CreatedAt, &s.UpdatedAt)
+		err = rows.Scan(&s.ID, &s.UserID, &s.Name, &s.Token, &s.CreatedAt, &s.UpdatedAt, &s.EventCount)
 		if err != nil {
 			return sites, fmt.Errorf("[SiteRepo.ListForUser] %w", err)
 		}
@@ -61,7 +68,7 @@ func (r *SiteRepo) Insert(s *Site) error {
 	token := utils.Token()
 	err := r.db.QueryRow(stmt, s.UserID, s.Name, token).Scan(&s.ID, &s.CreatedAt, &s.UpdatedAt)
 	if err != nil {
-		return fmt.Errorf("[SiteRepo.Create]")
+		return fmt.Errorf("[SiteRepo.Insert] %w", err)
 	}
 
 	s.Token = token
@@ -92,4 +99,22 @@ func (r *SiteRepo) Delete(s *Site) error {
 	}
 
 	return nil
+}
+
+func (r *SiteRepo) FindByToken(token string) (Site, error) {
+	var s Site
+	err := r.db.QueryRow("SELECT * FROM sites WHERE token = $1 LIMIT 1;", token).Scan(
+		&s.ID,
+		&s.UserID,
+		&s.Name,
+		&s.Token,
+		&s.CreatedAt,
+		&s.UpdatedAt,
+	)
+
+	if err != nil {
+		return s, fmt.Errorf("[SiteRepo.FindByToken] %w", err)
+	}
+
+	return s, nil
 }

@@ -35,6 +35,47 @@ func (m middleware) commonHeaders(next http.Handler) http.Handler {
 	})
 }
 
+func (m middleware) commonAPIHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Vary", "Access-Control-Request-Method")
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (m middleware) loadSite(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		token, found := strings.CutPrefix(authHeader, "Bearer ")
+		if !found {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		site, err := m.app.Repos.Sites.FindByToken(token)
+		if err != nil {
+			if errors.Is(err, models.ErrNoRecord) {
+				http.NotFound(w, r)
+				return
+			}
+
+			m.app.ServerError(w, r, err)
+			return
+		}
+
+		r = m.app.SetCurrentSite(r, site)
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (m middleware) cacheStaticAssets(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if m.app.Config.IsProductionEnv() {

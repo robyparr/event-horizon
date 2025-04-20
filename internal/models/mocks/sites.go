@@ -58,3 +58,13 @@ func (r *SiteRepo) Delete(s *models.Site) error {
 	delete(r.Sites, s.ID)
 	return nil
 }
+
+func (r *SiteRepo) FindByToken(token string) (models.Site, error) {
+	for _, site := range r.Sites {
+		if site.Token == token {
+			return site, nil
+		}
+	}
+
+	return models.Site{}, models.ErrNoRecord
+}
