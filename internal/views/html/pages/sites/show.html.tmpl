@@ -36,6 +36,26 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="label">Events Today</div>
+      <div class="value">{{.Data.eventsToday}}</div>
+    </div>
   </div>
+
+  <canvas id="event-chart" data-chart-data="{{.Data.chartData}}"></canvas>
+  <script nonce="{{.ScriptNonce}}">
+    const el = document.querySelector('#event-chart')
+    const data = JSON.parse(el.dataset.chartData)
+
+    new Chart(el, {
+      type: "line",
+      data: {
+        labels: Object.keys(data),
+        datasets: [
+          { label: 'Events', data: Object.entries(data), fill: true }
+        ]
+      }
+    })
+  </script>
 </div>
 {{end}}

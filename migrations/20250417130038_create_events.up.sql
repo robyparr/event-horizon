@@ -11,3 +11,4 @@ CREATE TABLE events (
 );
 
 CREATE INDEX idx_events_site_id ON events(site_id);
+CREATE INDEX idx_events_created_at ON events(created_at);

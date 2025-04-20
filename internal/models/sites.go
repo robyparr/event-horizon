@@ -42,6 +42,7 @@ func (r *SiteRepo) ListForUser(u *User) ([]Site, error) {
 	if err != nil {
 		return sites, fmt.Errorf("[SiteRepo.ListForUser] %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var s Site

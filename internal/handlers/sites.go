@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/robyparr/event-horizon/internal"
 	"github.com/robyparr/event-horizon/internal/models"
@@ -73,8 +75,22 @@ func sitesShowHandler(app *internal.App) http.Handler {
 			return
 		}
 
+		chartData, err := app.Repos.Events.CountsByDate(&site)
+		if err != nil {
+			app.ServerError(w, r, err)
+			return
+		}
+
+		chartDataJSON, err := json.Marshal(chartData)
+		if err != nil {
+			app.ServerError(w, r, err)
+			return
+		}
+
 		vm := views.NewViewModel(app, r, nil)
 		vm.Data["site"] = site
+		vm.Data["chartData"] = string(chartDataJSON)
+		vm.Data["eventsToday"] = chartData[time.Now().UTC().Format("2006-01-02")]
 		app.Render(w, r, http.StatusOK, "sites/show.html.tmpl", vm)
 	})
 }
