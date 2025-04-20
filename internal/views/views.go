@@ -22,6 +22,7 @@ type viewModel struct {
 	Form            any
 	Flash           map[string]string
 	Data            map[string]any
+	ScriptNonce     string
 	CSRFToken       string
 	AppStartedAt    int64
 }
@@ -35,6 +36,7 @@ func NewViewModel(app *internal.App, r *http.Request, form any) viewModel {
 		Flash:           app.GetFlashDataFromContext(r),
 		Data:            make(map[string]any),
 		AppStartedAt:    app.StartedAt.Unix(),
+		ScriptNonce:     app.MustGetScriptNonce(r),
 
 		CSRFToken: nosurf.Token(r),
 		Form:      form,

@@ -144,6 +144,7 @@ func (r *SessionRepo) ListForUser(u *User) ([]Session, error) {
 		return sessions, fmt.Errorf("[SessionRepo.ListForUser] %w", err)
 	}
 
+	defer rows.Close()
 	for rows.Next() {
 		var s Session
 		err = rows.Scan(&s.ID, &s.Token, &s.IPAddress, &s.UserAgent, &s.ExpiresAt, &s.CreatedAt, &s.UpdatedAt)

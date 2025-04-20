@@ -11,10 +11,10 @@ func Token() string {
 	b := make([]byte, 16)
 	rand.Read(b)
 
-	return EncodeBase62(b)
+	return encodeBase62(b)
 }
 
-func EncodeBase62(b []byte) string {
+func encodeBase62(b []byte) string {
 	num := new(big.Int).SetBytes(b)
 
 	var encoded []byte

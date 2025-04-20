@@ -11,6 +11,7 @@ import (
 	"github.com/justinas/nosurf"
 	"github.com/robyparr/event-horizon/internal"
 	"github.com/robyparr/event-horizon/internal/models"
+	"github.com/robyparr/event-horizon/internal/utils"
 )
 
 var skipLoggingURLPrefixes = []string{
@@ -25,12 +26,14 @@ type middleware struct {
 
 func (m middleware) commonHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self';")
+		scriptNonce := utils.Token()
+		w.Header().Set("Content-Security-Policy", fmt.Sprintf("default-src 'self'; style-src 'self'; script-src 'self' 'nonce-%s'", scriptNonce))
 		w.Header().Set("Referrer-Policy", "origin-when-cross-origin")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "deny")
 		w.Header().Set("X-XSS-Protection", "0")
 
+		r = m.app.SetScriptNonce(r, scriptNonce)
 		next.ServeHTTP(w, r)
 	})
 }

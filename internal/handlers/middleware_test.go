@@ -25,8 +25,8 @@ func TestCommonHeaders(t *testing.T) {
 	middleware{}.commonHeaders(next).ServeHTTP(rr, r)
 	result := rr.Result()
 
-	expected := "default-src 'self'; style-src 'self';"
-	assert.Equal(t, result.Header.Get("Content-Security-Policy"), expected)
+	expected := "default-src 'self'; style-src 'self'; script-src 'self' 'nonce-"
+	assert.StringContains(t, result.Header.Get("Content-Security-Policy"), expected)
 
 	assert.Equal(t, result.Header.Get("Referrer-Policy"), "origin-when-cross-origin")
 	assert.Equal(t, result.Header.Get("X-Content-Type-Options"), "nosniff")
