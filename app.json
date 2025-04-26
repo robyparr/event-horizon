@@ -3,5 +3,16 @@
     "dokku": {
       "postdeploy": "migrate -path=./migrations -database=\"$DATABASE_URL\" up"
     }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "web check",
+        "description": "Checking if the app responds to the /healthcheck endpoint",
+        "path": "/healthcheck",
+        "attempts": 3
+      }
+    ]
   }
 }
