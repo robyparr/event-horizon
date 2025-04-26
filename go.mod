@@ -1,4 +1,4 @@
-// +heroku goVersion 1.24
+// +heroku goVersion go1.23
 
 module github.com/robyparr/event-horizon
 
