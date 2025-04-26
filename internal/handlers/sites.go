@@ -87,10 +87,23 @@ func sitesShowHandler(app *internal.App) http.Handler {
 			return
 		}
 
+		metrics, err := app.Repos.Events.MetricCounts(&site)
+		if err != nil {
+			app.ServerError(w, r, err)
+			return
+		}
+
+		metricsData, err := metrics.ToJSON()
+		if err != nil {
+			app.ServerError(w, r, err)
+			return
+		}
+
 		vm := views.NewViewModel(app, r, nil)
 		vm.Data["site"] = site
-		vm.Data["chartData"] = string(chartDataJSON)
 		vm.Data["eventsToday"] = chartData[time.Now().UTC().Format("2006-01-02")]
+		vm.Data["chartData"] = string(chartDataJSON)
+		vm.Data["metricsData"] = metricsData
 		app.Render(w, r, http.StatusOK, "sites/show.html.tmpl", vm)
 	})
 }

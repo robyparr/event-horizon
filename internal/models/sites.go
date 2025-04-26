@@ -78,14 +78,24 @@ func (r *SiteRepo) Insert(s *Site) error {
 
 func (r *SiteRepo) FindForUser(u *User, id int64) (Site, error) {
 	var s Site
-	err := r.db.QueryRow("SELECT * FROM sites WHERE user_id = $1 AND id = $2;", u.ID, id).Scan(
+	stmt := `
+SELECT *,
+	(SELECT COUNT(*) FROM events WHERE site_id = sites.id)
+FROM sites
+WHERE user_id = $1
+	AND id = $2;
+`
+
+	err := r.db.QueryRow(stmt, u.ID, id).Scan(
 		&s.ID,
 		&s.UserID,
 		&s.Name,
 		&s.Token,
 		&s.CreatedAt,
 		&s.UpdatedAt,
+		&s.EventCount,
 	)
+
 	if err != nil {
 		return s, fmt.Errorf("[SiteRepo.FindForUser] %w", err)
 	}

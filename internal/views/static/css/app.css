@@ -210,7 +210,7 @@ table {
   }
 }
 
-.label {
+.badge {
   display: inline-block;
   padding: 4px 8px;
   font-size: 0.5rem;
@@ -271,7 +271,7 @@ table {
     &:not(:last-child) { margin-bottom: 1rem; }
 
     .label {
-      flex: 0 0 125px;
+      flex: 0 0 90px;
       font-weight: 500;
       color: #555;
     }
@@ -280,6 +280,96 @@ table {
   }
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+
+  [class^="col-"]:not(:last-child) {
+    flex: 1 0 0;
+    margin-right: var(--base-spacing);
+  }
+
+  .col-1 { flex: 0 0 8.333%; max-width: 8.333%; }
+  .col-2 { flex: 0 0 16.666%; max-width: 16.666%; }
+  .col-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+  .col-5 { flex: 0 0 41.666%; max-width: 41.666%; }
+  .col-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-7 { flex: 0 0 58.333%; max-width: 58.333%; }
+  .col-8 { flex: 0 0 66.666%; max-width: 66.666%; }
+  .col-9 { flex: 0 0 75%; max-width: 75%; }
+  .col-10 { flex: 0 0 83.333%; max-width: 83.333%; }
+  .col-11 { flex: 0 0 91.666%; max-width: 91.666%; }
+  .col-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+@media (max-width: 769px) {
+  .row {
+    .col-sm-1 { flex: 0 0 8.333%; max-width: 8.333%; }
+    .col-sm-2 { flex: 0 0 16.666%; max-width: 16.666%; }
+    .col-sm-3 { flex: 0 0 25%; max-width: 25%; }
+    .col-sm-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+    .col-sm-5 { flex: 0 0 41.666%; max-width: 41.666%; }
+    .col-sm-6 { flex: 0 0 50%; max-width: 50%; }
+    .col-sm-7 { flex: 0 0 58.333%; max-width: 58.333%; }
+    .col-sm-8 { flex: 0 0 66.666%; max-width: 66.666%; }
+    .col-sm-9 { flex: 0 0 75%; max-width: 75%; }
+    .col-sm-10 { flex: 0 0 83.333%; max-width: 83.333%; }
+    .col-sm-11 { flex: 0 0 91.666%; max-width: 91.666%; }
+    .col-sm-12 { flex: 0 0 100%; max-width: 100%; }
+  }
+}
+
+@media (min-width: 768px) {
+  .row {
+    .col-md-1 { flex: 0 0 8.333%; max-width: 8.333%; }
+    .col-md-2 { flex: 0 0 16.666%; max-width: 16.666%; }
+    .col-md-3 { flex: 0 0 25%; max-width: 25%; }
+    .col-md-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+    .col-md-5 { flex: 0 0 41.666%; max-width: 41.666%; }
+    .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+    .col-md-7 { flex: 0 0 58.333%; max-width: 58.333%; }
+    .col-md-8 { flex: 0 0 66.666%; max-width: 66.666%; }
+    .col-md-9 { flex: 0 0 75%; max-width: 75%; }
+    .col-md-10 { flex: 0 0 83.333%; max-width: 83.333%; }
+    .col-md-11 { flex: 0 0 91.666%; max-width: 91.666%; }
+    .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+  }
+}
+
+@media (min-width: 992px) {
+  .row {
+    .col-lg-1 { flex: 0 0 8.333%; max-width: 8.333%; }
+    .col-lg-2 { flex: 0 0 16.666%; max-width: 16.666%; }
+    .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+    .col-lg-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+    .col-lg-5 { flex: 0 0 41.666%; max-width: 41.666%; }
+    .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+    .col-lg-7 { flex: 0 0 58.333%; max-width: 58.333%; }
+    .col-lg-8 { flex: 0 0 66.666%; max-width: 66.666%; }
+    .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
+    .col-lg-10 { flex: 0 0 83.333%; max-width: 83.333%; }
+    .col-lg-11 { flex: 0 0 91.666%; max-width: 91.666%; }
+    .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+  }
+}
+
+.number-stat {
+  max-width: 240px;
+  font-family: system-ui, sans-serif;
+
+  .label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+
+  .value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #111827;
+  }
+}
 
 /* Utilities */
 .flex { display: flex; }
@@ -289,13 +379,17 @@ table {
 .flex-grow { flex-grow: 1; }
 
 .align-center { margin: auto; }
+.text-center { text-align: center; }
 
 .w-full { width: 100%; }
 .max-w-500px { max-width: 500px; }
 
 .mb-1 { margin-bottom: var(--base-spacing); }
 .mb-3 { margin-bottom: calc(var(--base-spacing) * 3); }
+
+.mt-1 { margin-top: var(--base-spacing); }
 .mt-2 { margin-top: calc(var(--base-spacing) * 2); }
+.mt-3 { margin-top: calc(var(--base-spacing) * 3); }
 
 .size-3 { width: 1rem; height: 1rem; }
 .size-6 { width: 1.5rem; height: 1.5rem; }
