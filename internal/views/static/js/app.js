@@ -35,7 +35,7 @@ function setTimezoneFieldDefault() {
 }
 
 function initializeCharts() {
-  const chartOptions = {
+  const datasetOptions = {
     line: {
       fill: true,
     },
@@ -46,17 +46,23 @@ function initializeCharts() {
 
   document.querySelectorAll("canvas[data-chart-data]").forEach((el) => {
     const data = JSON.parse(el.dataset.chartData);
-    const chartType = el.dataset.chartType;
+    let chartType = el.dataset.chartType;
+    const chartOptions = {}
+    if (chartType === 'horizontal-bar') {
+      chartType = 'bar'
+      chartOptions.indexAxis = 'y'
+    }
 
     new Chart(el, {
       type: chartType,
+      options: chartOptions,
       data: {
         labels: Object.keys(data),
         datasets: [
           {
             label: el.dataset.chartLabel,
             data: Object.values(data),
-            ...chartOptions[chartType],
+            ...datasetOptions[chartType],
           },
         ],
       },

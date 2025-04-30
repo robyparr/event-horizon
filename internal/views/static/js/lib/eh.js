@@ -13,6 +13,10 @@ function eh(action, data) {
   xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
   xhr.setRequestHeader("Authorization", "Bearer " + projectKey);
 
-  var jsonBody = JSON.stringify({ action: action, count: data.count || 1 });
+  var jsonBody = JSON.stringify({
+    action: action,
+    count: data.count || 1,
+    referrer: document.referrer
+  });
   xhr.send(jsonBody);
 }

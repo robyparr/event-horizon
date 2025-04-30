@@ -16,6 +16,7 @@ type Event struct {
 	DeviceType string
 	OS         string
 	Browser    string
+	Referrer   sql.NullString
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
@@ -30,14 +31,16 @@ type EventMetrics struct {
 	DeviceType map[string]int
 	OS         map[string]int
 	Browser    map[string]int
+	Referrer   map[string]int
 }
 
 func (em *EventMetrics) ToJSON() (map[string]string, error) {
 	deviceTypeJSON, deviceTypeErr := json.Marshal(em.DeviceType)
 	osJSON, osErr := json.Marshal(em.OS)
 	browserJSON, browserErr := json.Marshal(em.Browser)
+	referrerJSON, referrerErr := json.Marshal(em.Referrer)
 
-	firstError := cmp.Or(deviceTypeErr, osErr, browserErr)
+	firstError := cmp.Or(deviceTypeErr, osErr, browserErr, referrerErr)
 	if firstError != nil {
 		return nil, firstError
 	}
@@ -46,6 +49,7 @@ func (em *EventMetrics) ToJSON() (map[string]string, error) {
 		"deviceType": string(deviceTypeJSON),
 		"os":         string(osJSON),
 		"browser":    string(browserJSON),
+		"referrer":   string(referrerJSON),
 	}, nil
 }
 
@@ -54,11 +58,11 @@ type EventRepo struct {
 }
 
 func (r *EventRepo) Insert(event *Event) error {
-	stmt := `INSERT INTO events (site_id, action, count, device_type, os, browser)
-	VALUES($1, $2, $3, $4, $5, $6) RETURNING id, created_at, updated_at;`
+	stmt := `INSERT INTO events (site_id, action, count, device_type, os, browser, referrer)
+	VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id, created_at, updated_at;`
 
 	err := r.db.
-		QueryRow(stmt, event.SiteID, event.Action, event.Count, event.DeviceType, event.OS, event.Browser).
+		QueryRow(stmt, event.SiteID, event.Action, event.Count, event.DeviceType, event.OS, event.Browser, event.Referrer).
 		Scan(&event.ID, &event.CreatedAt, &event.UpdatedAt)
 
 	if err != nil {
@@ -135,12 +139,17 @@ UNION
 SELECT browser, count(*), 'browser' AS metric
 FROM filtered_events
 GROUP BY browser
+UNION
+SELECT referrer, count(*), 'referrer' AS metric
+FROM filtered_events
+GROUP BY referrer;
 `
 
 	out := EventMetrics{
 		DeviceType: make(map[string]int),
 		OS:         make(map[string]int),
 		Browser:    make(map[string]int),
+		Referrer:   make(map[string]int),
 	}
 
 	rows, err := r.db.Query(stmt, site.ID, startOn, endOn)
@@ -150,7 +159,7 @@ GROUP BY browser
 	defer rows.Close()
 
 	for rows.Next() {
-		var value string
+		var value *string
 		var count int
 		var metric string
 
@@ -161,11 +170,17 @@ GROUP BY browser
 
 		switch metric {
 		case "device_type":
-			out.DeviceType[value] += count
+			out.DeviceType[*value] += count
 		case "os":
-			out.OS[value] += count
+			out.OS[*value] += count
 		case "browser":
-			out.Browser[value] += count
+			out.Browser[*value] += count
+		case "referrer":
+			key := "direct"
+			if value != nil {
+				key = *value
+			}
+			out.Referrer[key] += count
 		default:
 			panic("Unknown metric: " + metric)
 		}

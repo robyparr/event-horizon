@@ -33,15 +33,19 @@
       <div class="row mt-3">
         <div class="col-6">
           <h3 class="text-center">Browsers</h3>
-          <canvas id="browser-chart" data-chart-type="doughnut" data-chart-label="Browsers" data-chart-data="{{.Data.metricsData.browser}}"></canvas>
+          <canvas id="browser-chart" data-chart-type="horizontal-bar" data-chart-label="Browsers" data-chart-data="{{.Data.metricsData.browser}}"></canvas>
         </div>
         <div class="col-6">
           <h3 class="text-center">Devices</h3>
-          <canvas id="device-type-chart" data-chart-type="doughnut" data-chart-label="Devices" data-chart-data="{{.Data.metricsData.deviceType}}"></canvas>
+          <canvas id="device-type-chart" data-chart-type="horizontal-bar" data-chart-label="Devices" data-chart-data="{{.Data.metricsData.deviceType}}"></canvas>
         </div>
         <div class="col-6">
           <h3 class="text-center">Operating Systems</h3>
-          <canvas id="os-chart" data-chart-type="doughnut" data-chart-label="Operating Systems" data-chart-data="{{.Data.metricsData.os}}"></canvas>
+          <canvas id="os-chart" data-chart-type="horizontal-bar" data-chart-label="Operating Systems" data-chart-data="{{.Data.metricsData.os}}"></canvas>
+        </div>
+        <div class="col-6">
+          <h3 class="text-center">Referrers</h3>
+          <canvas id="os-chart" data-chart-type="horizontal-bar" data-chart-label="Referrers" data-chart-data="{{.Data.metricsData.referrer}}"></canvas>
         </div>
       </div>
     </div>

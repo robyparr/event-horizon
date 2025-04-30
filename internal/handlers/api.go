@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"cmp"
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"net/url"
 
 	"github.com/mileusna/useragent"
 	"github.com/robyparr/event-horizon/internal"
@@ -36,13 +38,20 @@ func apiCreateEventHandler(app *internal.App) http.Handler {
 		}
 
 		var eventData struct {
-			Action string `json:"action"`
-			Count  int    `json:"count"`
+			Action   string `json:"action"`
+			Count    int    `json:"count"`
+			Referrer string `json:"referrer"`
 		}
+
 		err := json.NewDecoder(r.Body).Decode(&eventData)
 		if err != nil {
 			app.ServerError(w, r, err)
 			return
+		}
+
+		referrerURL, err := url.Parse(eventData.Referrer)
+		if err != nil {
+			referrerURL = &url.URL{}
 		}
 
 		site := app.MustGetCurrentSite(r)
@@ -53,6 +62,7 @@ func apiCreateEventHandler(app *internal.App) http.Handler {
 			DeviceType: cmp.Or(ua.Device, "Unknown"),
 			OS:         cmp.Or(ua.OS, "Unknown"),
 			Browser:    cmp.Or(ua.Name, "Unknown"),
+			Referrer:   sql.NullString{Valid: referrerURL.Host != "", String: referrerURL.Host},
 		}
 
 		err = app.Repos.Events.Insert(&event)
