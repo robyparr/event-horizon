@@ -161,11 +161,11 @@ GROUP BY browser
 
 		switch metric {
 		case "device_type":
-			out.DeviceType[value] += 1
+			out.DeviceType[value] += count
 		case "os":
-			out.OS[value] += 1
+			out.OS[value] += count
 		case "browser":
-			out.Browser[value] += 1
+			out.Browser[value] += count
 		default:
 			panic("Unknown metric: " + metric)
 		}
