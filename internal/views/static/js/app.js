@@ -47,7 +47,12 @@ function initializeCharts() {
   document.querySelectorAll("canvas[data-chart-data]").forEach((el) => {
     const data = JSON.parse(el.dataset.chartData);
     let chartType = el.dataset.chartType;
-    const chartOptions = {}
+    const chartOptions = {
+      plugins: {
+        legend: { display: false },
+        tooltip: { displayColors: false }
+      }
+    }
     if (chartType === 'horizontal-bar') {
       chartType = 'bar'
       chartOptions.indexAxis = 'y'
