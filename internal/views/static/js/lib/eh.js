@@ -16,7 +16,7 @@ function eh(action, data) {
   var jsonBody = JSON.stringify({
     action: action,
     count: data.count || 1,
-    referrer: document.referrer
+    referrer: document.referrer === window.location.host ? undefined : document.referrer
   });
   xhr.send(jsonBody);
 }
