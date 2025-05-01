@@ -283,10 +283,10 @@ table {
 .row {
   display: flex;
   flex-wrap: wrap;
+  gap: var(--base-spacing);
 
   [class^="col-"]:not(:last-child) {
     flex: 1 0 0;
-    margin-right: var(--base-spacing);
   }
 
   .col-1 { flex: 0 0 8.333%; max-width: 8.333%; }
@@ -393,3 +393,7 @@ table {
 
 .size-3 { width: 1rem; height: 1rem; }
 .size-6 { width: 1.5rem; height: 1.5rem; }
+
+@media (max-width: 769px) {
+  .hidden-sm { display: none; }
+}
