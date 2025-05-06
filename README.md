@@ -1,6 +1,6 @@
 # event-horizon
 
-A template for web apps in Go, based on the Let's Go and Let's Go Further books.
+A simple analytics tool that preserves users' privacy and doesn't require cookies.
 
 ## Requirements
 
